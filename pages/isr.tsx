@@ -45,6 +45,7 @@ export async function getStaticProps() {
 			revalidate: 15,
 		};
 	} catch (error) {
+		console.error(error);
 		return {
 			props: {},
 		};
