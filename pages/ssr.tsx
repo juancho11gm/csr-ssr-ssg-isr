@@ -2,12 +2,10 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Inter } from '@next/font/google';
 import styles from '../styles/Home.module.css';
+import DateTime from '../components/DateTime';
+import { TimezoneI } from '../interfaces';
 
 const inter = Inter({ subsets: ['latin'] });
-
-interface TimezoneI {
-	datetime: string;
-}
 
 export default function SSR({ datetime }: TimezoneI) {
 	return (
@@ -20,7 +18,7 @@ export default function SSR({ datetime }: TimezoneI) {
 			</Head>
 			<main className={styles.main}>
 				<h2 className={inter.className}>Server Side Rendering</h2>
-				{datetime}
+				<DateTime datetime={new Date(datetime)} />
 				<Link href='/' className={styles.card} rel='noopener noreferrer'>
 					<p className={inter.className}>
 						Go back <span>-&gt;</span>
@@ -32,13 +30,19 @@ export default function SSR({ datetime }: TimezoneI) {
 }
 
 export async function getServerSideProps() {
-	const response = await fetch(
-		'http://worldtimeapi.org/api/timezone/America/Bogota'
-	);
-	const timezone: TimezoneI = await response.json();
-	return {
-		props: {
-			datetime: timezone.datetime,
-		},
-	};
+	try {
+		const response = await fetch(
+			'https://worldtimeapi.org/api/timezone/America/Bogota'
+		);
+		const timezone: TimezoneI = await response.json();
+		return {
+			props: {
+				datetime: timezone.datetime,
+			},
+		};
+	} catch (error) {
+		return {
+			props: {},
+		};
+	}
 }
